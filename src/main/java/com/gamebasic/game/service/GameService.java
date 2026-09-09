@@ -42,6 +42,8 @@ public class GameService {
             game.getCurrentFloor(),
             game.getPhase(),
             game.getStatus(),
+            game.getCreatedAt(),
+            game.getUpdatedAt(),
             deck
         );
     }
@@ -83,6 +85,8 @@ public class GameService {
             game.getCurrentFloor(),
             game.getPhase(),
             game.getStatus(),
+            game.getCreatedAt(),
+            game.getUpdatedAt(),
             deck
         );
     }
@@ -100,7 +104,10 @@ public class GameService {
                         game.getCurrentFloor(),
                         game.getPhase(),
                         game.getStatus(),
-                        runCardRepository.findAllByGameOrderByIdAsc(game).size()
+                        runCardRepository.findAllByGameOrderByIdAsc(game).size(),
+                        game.getCreatedAt(),
+                        game.getUpdatedAt()
+
                 )).toList();
      }
 
@@ -124,6 +131,8 @@ public class GameService {
                 game.getCurrentFloor(),
                 game.getPhase(),
                 game.getStatus(),
+                game.getCreatedAt(),
+                game.getUpdatedAt(),
                 deck
             );
      }
