@@ -2,6 +2,7 @@ package com.gamebasic.runcard.repository;
 
 import com.gamebasic.game.entity.Game;
 import com.gamebasic.runcard.entity.RunCard;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
