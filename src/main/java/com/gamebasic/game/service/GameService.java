@@ -63,6 +63,12 @@ public class GameService {
     @Transactional
     public GameDetailResponse updateProgress(Long gameId, ProgressRequest request) {
         Game game = findGame(gameId);
+
+        if (game.isFinished())
+        {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+
         game.updateProgress(
             request.getCurrentHp(),
             request.getCurrentFloor(),
@@ -156,4 +162,6 @@ public class GameService {
         runCardRepository.deleteAllByGame(game);
         gameRepository.delete(game);
     }
+
+
 }
