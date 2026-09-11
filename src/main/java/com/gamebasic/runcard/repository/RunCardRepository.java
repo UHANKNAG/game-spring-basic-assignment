@@ -2,8 +2,8 @@ package com.gamebasic.runcard.repository;
 
 import com.gamebasic.game.entity.Game;
 import com.gamebasic.runcard.entity.RunCard;
-import jakarta.validation.constraints.Size;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -13,5 +13,11 @@ public interface RunCardRepository extends JpaRepository<RunCard, Long> {
     void deleteAllByGame(Game game);
 
     // TODO (Lv 11): @Query 작성
-    // List<DeckCount> countByGames(List<Game> games);
+    @Query("""
+        SELECT rc.game.id as gameId, COUNT(rc.id) as cardCount
+        FROM RunCard rc
+        WHERE  rc.game in :games
+        GROUP BY rc.game.id
+    """)
+    List<DeckCount> countByGames(List<Game> games);
 }

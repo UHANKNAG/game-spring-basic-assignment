@@ -8,6 +8,7 @@ import com.gamebasic.game.repository.GameRepository;
 import com.gamebasic.runcard.dto.CardResponse;
 import com.gamebasic.runcard.dto.RunCardRequest;
 import com.gamebasic.runcard.entity.RunCard;
+import com.gamebasic.runcard.repository.DeckCount;
 import com.gamebasic.runcard.repository.RunCardRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -97,9 +100,16 @@ public class GameService {
     // TODO (Lv 7): 게임 목록 조회. 주석을 풀고 구현하세요.
      @Transactional(readOnly = true)
      public List<GameSummaryResponse> getGames() {
-        List<Game> games = gameRepository.findAllByOrderByIdDesc();
+         List<Game> games = gameRepository.findAllByOrderByIdDesc();
 
-        return games.stream()
+         // DB 조회 한 번에 game ID 별 card Count 객체를 List로 담아옴
+         List<DeckCount> counts = runCardRepository.countByGames(games);
+
+         // 키, 값 형태의 Map으로 관리하여 game Id만 입력하면 card Count가 바로 나오도록
+         Map<Long, Long> deckCountOfGames = counts.stream()
+                 .collect(Collectors.toMap(DeckCount::getGameId, DeckCount::getCardCount));
+
+         return games.stream()
                 .map(game -> new GameSummaryResponse(
                         game.getId(),
                         game.getPlayerName(),
@@ -107,7 +117,9 @@ public class GameService {
                         game.getCurrentFloor(),
                         game.getPhase(),
                         game.getStatus(),
-                        runCardRepository.findAllByGameOrderByIdAsc(game).size(),
+                        // 카드가 0장인 게임은 GROUP BY 결과에 없어서 Map 에 key 가 없다 -> getOrDefault 로 0L 대체
+                        // Math.toIntExact 로 Long -> int (Integer 오토박싱은 Java 가 알아서)
+                        Math.toIntExact(deckCountOfGames.getOrDefault(game.getId(), 0L)),
                         game.getCreatedAt(),
                         game.getUpdatedAt()
 
