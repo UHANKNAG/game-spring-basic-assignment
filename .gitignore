@@ -3,6 +3,3 @@
 build/
 data/
 *.iml
-
-### Secret Properties
-application-secret.properties
