@@ -14,7 +14,7 @@ public interface RunCardRepository extends JpaRepository<RunCard, Long> {
 
     // TODO (Lv 11): @Query 작성
     @Query("""
-        SELECT rc.game.id as gameId, COUNT(rc.id) as cardCount
+        SELECT new com.gamebasic.runcard.repository.DeckCount(rc.game.id, COUNT(rc.id))
         FROM RunCard rc
         WHERE  rc.game in :games
         GROUP BY rc.game.id
